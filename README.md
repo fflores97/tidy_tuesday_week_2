@@ -13,10 +13,28 @@ data <- readxl::read_xlsx("tidy_tuesday_week2.xlsx") %>%
 df <- data %>% 
   gather(key = "position", value = "salary", position = Cornerback:`Wide Receiver`) %>%
   mutate(salary = salary / 1000000) %>% 
-  mutate(status = "Offense")
+  # mutate(status = "Offense") %>%
+  mutate(
+    status = case_when(
+      position %in% 
+        c("Cornerback", 
+          "Defensive Lineman", 
+          "Linebacker", 
+          "Safety",
+          "Special Teamer"
+          ) ~ "Defense",
+      position %in%
+        c("Quarterback",
+          "Offensive Lineman",
+          "Running Back",
+          "Tight End",
+          "Wide Receiver"
+        ) ~ "Offense"
+    )
+  )
 
 # Label the defensive positions as such (idk I tidyverse approach to this, sorry)
-df[df$position %in% c("Cornerback", "Defensive Lineman", "Linebacker", "Tight End", "Safety"), "status"] <- "Defense"
+# df[df$position %in% c("Cornerback", "Defensive Lineman", "Linebacker", "Tight End", "Safety"), "status"] <- "Defense"
 
 # Filter out top 16 paid players per year
 df <- df %>% 
